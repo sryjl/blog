@@ -1,15 +1,15 @@
 <template>
-	<el-menu :default-active="activeIndex2" class="el-menu-demo" mode="horizontal" background-color="#545c64" text-color="#fff"
+	<el-menu :default-active="$route.path" class="el-menu-demo" mode="horizontal" background-color="#545c64" text-color="#fff"
 	 active-text-color="#ffd04b" @select="toPage">
 
 		<view class="navlist">
 			<text class="iconfont icon-boke-copy"></text>
-			<el-menu-item index="1" class="el-menu-item-demo"><text class="iconfont icon-yemian"></text>首页</el-menu-item>
-			<el-menu-item index="2" class="el-menu-item-demo"><text class="iconfont icon-pinglun" ></text>文章</el-menu-item>
-			<el-menu-item index="3" class="el-menu-item-demo"><text class="iconfont icon-classify-act" ></text>分类</el-menu-item>
-			<el-menu-item index="4" class="el-menu-item-demo"><text class="iconfont icon-biaoqian"></text>标签</el-menu-item>
-			<el-menu-item index="5" class="el-menu-item-demo"><text class="iconfont icon-guidang" ></text>归档</el-menu-item>
-			<el-menu-item index="6" class="el-menu-item-demo"><text class="iconfont icon-guanyu"></text>关于我</el-menu-item>
+			<el-menu-item index="/index/home" class="el-menu-item-demo"><text class="iconfont icon-yemian"></text>首页</el-menu-item>
+			<el-menu-item index="/index/article" class="el-menu-item-demo"><text class="iconfont icon-pinglun" ></text>文章</el-menu-item>
+			<el-menu-item index="/index/class" class="el-menu-item-demo"><text class="iconfont icon-classify-act" ></text>分类</el-menu-item>
+			<el-menu-item index="/index/tags" class="el-menu-item-demo"><text class="iconfont icon-biaoqian"></text>标签</el-menu-item>
+			<el-menu-item index="/index/doc" class="el-menu-item-demo"><text class="iconfont icon-guidang" ></text>归档</el-menu-item>
+			<el-menu-item index="/index/readme" class="el-menu-item-demo"><text class="iconfont icon-guanyu"></text>关于我</el-menu-item>
 		</view>
 		<view class="login login-user" v-if="islogin">
 			<image :src="user.管理员.avatar" mode="aspectFill" class="userimg"></image>
@@ -54,21 +54,31 @@
 					message:'您已处于该页面',
 					offset:20
 				})
-				if(parseInt(e)<=6){
-					sessionStorage.setItem('pagenum',e)
-					this.activeIndex1 = e
-				}
-				if(e==='1'){
+				this.activeIndex1 = e
+				if(e==='/index/home'){
 					this.$router.push('/index/home')
-				}else if(e==='2'){
+				}else if(e==='/index/article'){
 					this.$router.push('/index/article')
+				}else if(e === '/index/class'){
+					this.$router.push('/index/class')	
+				}else if(e === '/index/tags'){
+					this.$router.push('/index/tags')
+					
+				}else if(e === '/index/doc'){
+					this.$router.push('/index/doc')
+					
+				}else if(e === '/index/readme'){
+					this.$router.push('/index/readme')
+					
+				}else if(e ==='9-1-1'){
+					this.$router.push('/create/article')
+				}else if(e ==='9-1-2'){
+					this.$router.push('/create/class')
+				}else if(e ==='9-1-3'){
+					this.$router.push('/create/newtags')
 				}
 			},
 			toLogin(){
-				console.log(this.activeIndex2)
-				// uni.navigateTo({
-				// 	url:'../login/index'
-				// })
 				this.$router.push("/login")
 			},
 			async getstatus() {
@@ -76,34 +86,24 @@
 					url: '/status'
 				})
 				this.user = res.data.data
-				console.log(this.user)
 			},
 			async loginout(){
 				const res = await this.$http({
 					url: '/logout'
 				})
-				console.log(res)
 				if(res.data.code === 200){
 					sessionStorage.removeItem('token')
 					this.$message.success('已成功退出登录')
-					this.islogin =false			
+					this.islogin =false	
+					this.$router.go(0);
 				}else{
 					this.$message.error('操作失败')
 				}		
 			}		
 		},
 		created() {
-			let state = sessionStorage.getItem('token')
-			let flag = sessionStorage.getItem('pagenum')
-			if(flag){
-		    this.activeIndex2 = flag
-			this.activeIndex1 = flag
-			}else{
-				this.activeIndex2 = "1"
-				this.activeIndex1 = "1"
-			}
-
-			if(state === 'islogin'){
+		let state = sessionStorage.getItem('token')
+		if(state === 'islogin'){
 				this.islogin =true
 				this.getstatus()
 			}

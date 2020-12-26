@@ -10,7 +10,7 @@
 				<image v-if="item.firstPicture" :src="item.firstPicture" mode="aspectFill"></image>
 				<image v-else src="../../static/biaotou.png" mode="aspectFill"></image>
 				<view class="title-all">
-					<text class="title">{{item.title}}</uni-title></text>
+					<text class="title"  @click="toArticle(item.id)">{{item.title}}</uni-title></text>
 					<text class="flag" v-show="item.flag">{{item.flag}}</text>
 					<text class="recommend" v-show="item.recommend">推荐</text>
 				</view>
@@ -66,6 +66,11 @@
 			}
 		},
 		methods: {
+			toArticle(e){
+				this.$router.push(
+				{path: '/index/articledetal', query: {id: e}}
+				)
+			},
 			async getdetail(val) {
 				const res = await this.$http({
 					url: '/blogPage/' + val
@@ -131,6 +136,9 @@
 </script>
 
 <style lang="less">
+	.title:hover{
+		color: orange;
+	}
 	.liubai{
 		height: 40px;
 	}

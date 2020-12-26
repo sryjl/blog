@@ -5,7 +5,7 @@
 			<el-card class="box-card" v-for="(item,index) in blogList" :key='item.id'>
 				<image v-if="item.firstPicture" :src="item.firstPicture" mode="aspectFill"></image>
 				<image v-else src="../../static/biaotou.png" mode="aspectFill"></image>
-				<view class="title-all">
+				<view class="title-all" @click="toArticle(item.id)">
 					<text class="title">{{item.title}}</uni-title></text>
 					<text class="flag" v-show="item.flag">{{item.flag}}</text>
 					<text class="recommend" v-show="item.recommend">推荐</text>
@@ -62,6 +62,11 @@
 			}
 		},
 		methods: {
+			toArticle(e){
+				this.$router.push(
+				{path: '/index/articledetal', query: {id: e}}
+				)
+			},
 			async getdetail(val) {
 				const res = await this.$http({
 					url: '/blogPage/' + val
@@ -194,8 +199,10 @@
 		text-overflow: ellipsis;
 		height: 30px;
 		line-height: 30px;
-
-		.title {
+		.title:hover{
+			color: orange;
+		}
+		.title{
 			display: inline-block;
 			overflow: hidden;
 			text-overflow: ellipsis;
@@ -204,7 +211,6 @@
 			font-weight: bold;
 			vertical-align: middle;
 		}
-
 		.flag {
 			border-radius: 5px;
 			height: 20px;
