@@ -11,6 +11,25 @@
 </template>
 
 <script>
+	export default{
+		data(){
+			return{
+				
+			}
+		},
+		methods:{
+			async gettags(e){
+				const res = await this.$http({
+					url:'/'+e,
+				})
+				console.log(res)
+			}
+			
+		},
+		created() {
+			this.gettags('allTypes')
+		}
+	}
 </script>
 
 <style lang="less">

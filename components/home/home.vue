@@ -84,7 +84,7 @@
 			},
 			async gettags() {
 				const res = await this.$http({
-					url: '/tags'
+					url: '/allTags'
 				})
 				this.tags = res.data.data.tags
 

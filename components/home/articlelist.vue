@@ -12,59 +12,68 @@
 				<text>浏览数: {{thisBlog.views}}</text>
 				<text>类型：{{thisBlog.flag}}</text>
 			</view>
-			
+
 			<view class="artcontent">
 				<p>{{thisBlog.content}}</p>
 			</view>
-			
 
-		</el-card>			
+
+		</el-card>
 		<view class="comment">
 			<el-card>
 				<view class="letcomment">
-					<el-input
-				  type="textarea"
-				  :rows="4"
-				  :placeholder="islogin?'请输入评论':'请登录后再评论'"
-				  v-model="textarea"
-				  resize = "none"
-				  :disabled ="!thisBlog.commentabled || !islogin || isupdate"
-				  maxlength='300'
-				  show-word-limit
-				  >
-				</el-input>
-				<view class="elbutton">
-					<el-button type="primary" @click="submitcom" :loading="isupdate" :disabled="!thisBlog.commentabled || !islogin || isupdate">提交评论</el-button>
-				</view>
+					<el-input type="textarea" :rows="4" :placeholder="islogin?'请输入评论':'请登录后再评论'" v-model="textarea"
+						resize="none" :disabled="!thisBlog.commentabled || !islogin || isupdate" maxlength='300'
+						show-word-limit>
+					</el-input>
+					<view class="elbutton">
+						<el-button type="primary" @click="submitcom(0)" :loading="isupdate"
+							:disabled="!thisBlog.commentabled || !islogin || isupdate">提交评论</el-button>
+					</view>
 				</view>
 
 				<!-- 留言板 -->
 				<view class="geliceng">
-					
+
 				</view>
 				<view class="gocomments" v-if="comments.length > 0">
 					<text class="commentnav">评论({{comments.length}})</text>
-					<view class="realcomment" v-for="(item,index) in comments" :key = "item.id">
-						
+					<view class="realcomment" v-for="(item,index) in comments" :key="item.id">
 						<view class="navlist">
-						<image  :src="item.avatar" mode="aspectFit"></image>
-						<text class="nickname">{{item.nickname}}</text>
-						<text class="createtime">2020/12/25</text>
+							<image :src="item.avatar" mode="aspectFit"></image>
+							<text class="nickname">{{item.nickname}}</text>
+							<text class="createtime">2020/12/25</text>
 						</view>
-
 						<text class="realcontent">{{item.content}}</text>
+						<view class="realcomment1" v-for="(item1,index1) in item.replyComment" :key="item1.id">
+							<view class="navlist">
+								<image :src="item1.avatar" mode="aspectFit"></image>
+								<text class="nickname">{{item1.nickname}}</text>
+								<text class="createtime">2020/12/25</text>
+							</view>
+							<text class="realcontent">{{item1.content}}</text>
+						</view>
+						<text class="moreRemake" @click="openmore(item.id)">回复</text>
+						<view style="margin-left: 40px;margin-bottom: 60px;">
+							<el-input v-if="item.id === moreRemake" type="textarea" :rows="2" :placeholder="islogin?'请输入评论':'请登录后再评论'" v-model="textarea1"></el-input>
+						</view>
+						<view class="elbutton" style="margin-top: -50px;">
+							<el-button v-if="item.id === moreRemake" type="primary" @click="submitcom(item.id)"
+								:loading="isupdate" :disabled="!thisBlog.commentabled || !islogin || isupdate">提交评论
+							</el-button>
+						</view>
 					</view>
 				</view>
 
-				<view  v-else class="gocomments">
+				<view v-else class="gocomments">
 					<text>暂无评论</text>
 				</view>
 				<view class="liubai">
-					
+
 				</view>
 			</el-card>
 			<view class="liubai">
-				
+
 			</view>
 		</view>
 	</view>
@@ -74,51 +83,76 @@
 	export default {
 		data() {
 			return {
-				isupdate:false,
-				textarea:'',
+				isupdate: false,
+				textarea: '',
+				textarea1:'',
 				id: '',
-				thisBlog:{
-					commentabled:false
+				thisBlog: {
+					commentabled: false
 				},
-				islogin:false,
-				comments:[]
+				islogin: false,
+				comments: [],
+				moreRemake: null
 			}
 		},
 		methods: {
-			submitcom(){
-				if(this.isupdate) return
-				if(this.textarea.trim()===''){
+			openmore(i) {
+				if (i === this.moreRemake) {
+					return this.moreRemake = null
+				} else {
+					this.moreRemake = i
+				}
+			},
+			submitcom(i) {
+				if (this.isupdate) return
+				if (this.textarea.trim() === ''&&i===0) {
 					return this.$message.error({
-						duration:1000,
-						message:'请输入内容后提交'
+						duration: 1000,
+						message: '请输入内容后提交'
+					})
+				}else if(this.textarea1.trim() === ''&&i!==0){
+					return this.$message.error({
+						duration: 1000,
+						message: '请输入内容后提交'
 					})
 				}
 				this.isupdate = true
-				this.sendcommit()
+				this.sendcommit(i)
 			},
-			async sendcommit(){
+			async sendcommit(i) {
+				let content = ''
+				if(i===0){
+					content = this.textarea
+				}else{
+					content = this.textarea1
+				}
 				console.log(this.$route.query.id)
 				const res = await uni.request({
-					url:'/api/say',
-					method:'POST',
-					data:{
-						content:this.textarea,
-						blogId:this.$route.query.id
+					url: '/api/say',
+					method: 'GET',
+					data: {
+						content:content,
+						blogId: this.$route.query.id,
+						parentCommentId: i
 					},
 				})
 				console.log(res)
 				this.isupdate = false
-				if(res[1].data.code ===200){
-					this.textarea = ''
+				if (res[1].data.code === 200) {
+					if(i===0){
+						this.textarea = ''
+					}else{
+						this.textarea1 = ''
+					}
 					this.getcomment()
 					return this.$message.success({
-						message:'评论成功',
-						duration:1000,
+						message: '评论成功',
+						duration: 1000,
 					})
-				}else{
+				} else {
 					return this.$message.error({
-						message:'评论失败',
-						duration:1000,
+						message: '评论失败',
+						duration: 1000,
 					})
 				}
 			},
@@ -129,9 +163,9 @@
 				this.thisBlog = res.data.data.thisBlog
 
 			},
-			async getcomment(){
-				const res1 =await this.$http({
-					url:'/comment/' + this.$route.query.id
+			async getcomment() {
+				const res1 = await this.$http({
+					url: '/comment?blogId=' + this.$route.query.id
 				})
 				this.comments = res1.data.data.comments
 			}
@@ -140,7 +174,7 @@
 		created() {
 			this.id = this.$route.query.id
 			let login = sessionStorage.getItem('token')
-			if(login){
+			if (login) {
 				this.islogin = true
 			}
 			this.getblogdetail()
@@ -150,75 +184,118 @@
 </script>
 
 <style lang="less">
-	.liubai{
+	.liubai {
 		height: 100px;
 	}
-	.realcomment{
+	.realcomment1{
+		margin-top: 10px;
+		margin-left: 30px;
+		margin-bottom: 10px;
+		image {
+			height: 20px;
+			width: 20px;
+			border-radius: 50%;
+			vertical-align: middle;
+		}
+		.navlist {
+			text {
+				vertical-align: middle;
+				margin-left: 10px;
+				font-size: 12px;
+			}
+		
+			.createtime {
+				color: #808080;
+			}
+		}
+		
+		.realcontent {
+			display: inline-block;
+			width: 920px;
+			margin: 0 40px;
+			margin-top: 10px;
+			overflow: hidden;
+		}
+	}
+	.realcomment {
 		margin-top: 30px;
-		image{
+		border-bottom: 1px solid #DCDFE6;
+		image {
 			height: 30px;
 			width: 30px;
 			border-radius: 50%;
 			vertical-align: middle;
 		}
-		.navlist{
-			text{
+
+		.navlist {
+			text {
 				vertical-align: middle;
 				margin-left: 10px;
 				font-size: 14px;
 			}
-			.createtime{
+
+			.createtime {
 				color: #808080;
 			}
 		}
-	    .realcontent{
+
+		.realcontent {
 			display: inline-block;
 			width: 950px;
 			margin: 0 40px;
 			margin-top: 10px;
-			
+			overflow: hidden;
 		}
 	}
-	.gocomments{
+
+	.gocomments {
 		margin: 0 40px;
 		width: 1030px;
 	}
-	.letcomment{
+
+	.letcomment {
 		width: 1030px;
 		margin: auto;
 	}
-	
-	.geliceng{
+
+	.geliceng {
 		height: 50px;
 	}
-	.commentnav{
+
+	.commentnav {
 		display: block;
 		font-size: 18px;
 		padding: 20px 0;
-		border-bottom:1px solid #DCDFE6;
+		border-bottom: 1px solid #DCDFE6;
 	}
-	.elbutton{
+
+	.elbutton {
 		margin: 10px 0;
 		float: right;
 	}
-	.comment{
-		width:1150px ;
+
+	.comment {
+		width: 1150px;
 		margin: auto;
 		margin-top: 20px;
 	}
-	.artcontent{
+
+	.artcontent {
 		padding: 0 40px;
 		margin: 50px 0;
 	}
-	P{
-		text-indent:2em;
+
+	P {
+		text-indent: 2em;
 		font-size: 16px;
 	}
-	.content{
+
+	.content {
 		width: 1150px;
 		margin: auto;
 		margin-top: 40px;
-		.title{
+
+		.title {
 			display: block;
 			height: 60px;
 			line-height: 60px;
@@ -226,15 +303,26 @@
 			font-weight: bold;
 			text-align: center;
 		}
-		.details{
+
+		.details {
 			text-align: center;
-			text{
+
+			text {
 				font-size: 14px;
 				padding-left: 30px;
 			}
-			.firstchild{
+
+			.firstchild {
 				padding-left: 0;
 			}
 		}
+	}
+
+	.moreRemake {
+		display: inline-block;
+		margin-top: 10rpx;
+		font-size: 14px;
+		color: rgb(45, 100, 179);
+		float: right;
 	}
 </style>
