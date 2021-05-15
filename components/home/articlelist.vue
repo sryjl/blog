@@ -8,7 +8,7 @@
 			<!-- 发布日期等 -->
 			<view class="details" v-if="thisBlog.updateTime">
 				<text class="firstchild">发表日期: {{thisBlog.updateTime.split('T')[0]}}</text>
-				<text>作者: 秋人</text>
+				<text>作者: {{thisBlog.user.nickname}}</text>
 				<text>浏览数: {{thisBlog.views}}</text>
 				<text>类型：{{thisBlog.flag}}</text>
 			</view>
@@ -22,13 +22,13 @@
 		<view class="comment">
 			<el-card>
 				<view class="letcomment">
-					<el-input type="textarea" :rows="4" :placeholder="islogin?'请输入评论':'请登录后再评论'" v-model="textarea"
-						resize="none" :disabled="!thisBlog.commentabled || !islogin || isupdate" maxlength='300'
+					<el-input type="textarea" :rows="4" :placeholder="'请输入评论'" v-model="textarea"
+						resize="none" :disabled="!thisBlog.commentabled  || isupdate" maxlength='300'
 						show-word-limit>
 					</el-input>
 					<view class="elbutton">
 						<el-button type="primary" @click="submitcom(0)" :loading="isupdate"
-							:disabled="!thisBlog.commentabled || !islogin || isupdate">提交评论</el-button>
+							:disabled="!thisBlog.commentabled || isupdate">提交评论</el-button>
 					</view>
 				</view>
 
@@ -40,7 +40,7 @@
 					<text class="commentnav">评论({{comments.length}})</text>
 					<view class="realcomment" v-for="(item,index) in comments" :key="item.id">
 						<view class="navlist">
-							<image :src="item.avatar" mode="aspectFit"></image>
+							<image :src="item.avatar?item.avatar:'https://pic4.zhimg.com/80/v2-aecc6d4f86aed329f65ad8dae802a918_720w.jpg?source=1940ef5c'" mode="aspectFit"></image>
 							<text class="nickname">{{item.nickname}}</text>
 							<text class="createtime">2020/12/25</text>
 						</view>
@@ -55,11 +55,11 @@
 						</view>
 						<text class="moreRemake" @click="openmore(item.id)">回复</text>
 						<view style="margin-left: 40px;margin-bottom: 60px;">
-							<el-input v-if="item.id === moreRemake" type="textarea" :rows="2" :placeholder="islogin?'请输入评论':'请登录后再评论'" v-model="textarea1"></el-input>
+							<el-input v-if="item.id === moreRemake" type="textarea" :rows="2" :placeholder="'请输入评论'" v-model="textarea1"></el-input>
 						</view>
 						<view class="elbutton" style="margin-top: -50px;">
 							<el-button v-if="item.id === moreRemake" type="primary" @click="submitcom(item.id)"
-								:loading="isupdate" :disabled="!thisBlog.commentabled || !islogin || isupdate">提交评论
+								:loading="isupdate" :disabled="!thisBlog.commentabled || isupdate">提交评论
 							</el-button>
 						</view>
 					</view>
@@ -150,8 +150,9 @@
 						duration: 1000,
 					})
 				} else {
-					return this.$message.error({
-						message: '评论失败',
+					this.getcomment()
+					return this.$message.success({
+						message: '游客评论成功',
 						duration: 1000,
 					})
 				}

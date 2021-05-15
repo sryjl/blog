@@ -15,7 +15,7 @@
 			<view class="botton-a">
 				<el-form-item>
 				<el-button type="primary" @click="submitForm('ruleForm')">登陆</el-button>
-				<el-button @click="resetForm('ruleForm')">重置</el-button>
+				<el-button @click="tosign">注册</el-button>
 			</el-form-item>
 			</view>
 			
@@ -106,11 +106,17 @@
 					this.$message.success('登陆成功，正在跳转至首页')
 					this.resetForm('ruleForm')
 					sessionStorage.setItem('token','islogin')
+					sessionStorage.setItem('id',res[1].data.data.user.id)
+					sessionStorage.setItem('nickname',res[1].data.data.user.nickname)
+					sessionStorage.setItem('img',res[1].data.data.user.avatar)
 					console.log(res[1])
 					setTimeout(
-					()=>{this.$router.replace("index")},1500)
+					()=>{this.$router.push("/index/home")},1500)
 				}
-			}
+			},
+			tosign(){
+				this.$router.push("/sign")
+			},
 
 		},
 		created() {

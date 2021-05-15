@@ -1,5 +1,48 @@
 ## 更新日志
 
+### 2.15.1
+
+*2021-02-23*
+
+#### Bug fixes
+
+- Drawer
+  - 修复 Drawer bug (by @cs1707)
+- Image
+  - 修复 image object fit ratio 在 IE 下的 bug  (#19583 by @charlie0228)
+- Cascader
+  - 修复 cascader panel active path (#20730 by @cs1707)
+- Calendar 
+  - 修复 calendar 国际化 bug (#20758 by @iamkun)
+- ColorPicker
+  - 修复 bugs (by @UxieVerity)
+
+#### Optimization
+
+- Doc
+  - 更新 Axure 设计资源 v2.1.0 (by @iamkun)
+
+### 2.15.0
+
+*2021-01-15*
+
+#### Bug 修复
+
+- Select
+  - 修复 placeholder 国际化 bug (#17644 by @nzh63)
+- Popconfirm
+  - 修复 Popconfirm 国际化 bug by @iamkun
+- Drawer
+  - 修复 focus bug (#20626 by @cs1707)
+- Image
+  - 图片预览优化 (#20652 by @cs1707)
+
+#### 优化
+
+- Doc
+  - 更新法语文档 datetime-picker.md (#20543 by @lonk)
+  - 更新 Progress 组件文档 (#20641 by @cs1707)
+
 ### 2.14.1
 
 *2020-11-11*

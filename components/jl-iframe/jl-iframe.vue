@@ -12,21 +12,21 @@
 			<el-menu-item index="/index/readme" class="el-menu-item-demo"><text class="iconfont icon-guanyu"></text>关于我</el-menu-item>
 		</view>
 		<view class="login login-user" v-if="islogin">
-			<image :src="user.管理员.avatar" mode="aspectFill" class="userimg"></image>
+			<image :src="avatar" mode="aspectFill" class="userimg"></image>
 			<el-submenu index="9" class="el-user">
-				<template slot="title">秋人</template>
+				<template slot="title">{{nickname}}</template>
 				<el-submenu index="9-1">
 					<template slot="title">管理</template>
-					<el-menu-item index="9-1-1">创建文章</el-menu-item>
-					<el-menu-item index="9-1-2">创建标签</el-menu-item>
-					<el-menu-item index="9-1-3">创建分类</el-menu-item>
+					<el-menu-item index="9-1-1">管理文章</el-menu-item>
+					<el-menu-item index="9-1-2">管理分类</el-menu-item>
+					<el-menu-item index="9-1-3">管理标签</el-menu-item>
 				</el-submenu>
+				<el-menu-item index="9-3">返回封面</el-menu-item>
 				<el-menu-item index="9-2" @click="loginout">注销</el-menu-item>
 			</el-submenu>
 		</view>
 		<view class="login" v-else>
-			<el-menu-item index="7" class="el-menu-item-demo-demo" @click='toLogin'>登录</el-menu-item>
-			<el-menu-item index="8" class="el-menu-item-demo-demo">注册</el-menu-item>
+			<el-menu-item index="7" class="el-menu-item-demo-demo" @click='tobox'>返回封面</el-menu-item>
 		</view>
 	</el-menu>
 </template>
@@ -41,6 +41,8 @@
 						avatar:''
 						}
 				},
+				userid:'',
+				nickname:'',
 				activeIndex2: '1',
 				islogin:false,
 				activeIndex1:''
@@ -48,6 +50,7 @@
 		},
 		methods: {
 			toPage(e){
+				console.log(e)
 				if(e===this.activeIndex1) return this.$message.warning({
 					duration:1000,
 					showClose:true,
@@ -76,10 +79,15 @@
 					this.$router.push('/create/class')
 				}else if(e ==='9-1-3'){
 					this.$router.push('/create/newtags')
-				}
+				}else if(e === '9-3'){
+					this.$router.push('/box')
+					}
 			},
-			toLogin(){
-				this.$router.push("/login")
+			tobox(){
+				this.$router.push("/box")
+			},
+			tosign(){
+				this.$router.push("/sign")
 			},
 			async getstatus() {
 				const res = await this.$http({
@@ -93,9 +101,11 @@
 				})
 				if(res.data.code === 200){
 					sessionStorage.removeItem('token')
+					sessionStorage.removeItem('id')
+					sessionStorage.removeItem('img')
 					this.$message.success('已成功退出登录')
 					this.islogin =false	
-					this.$router.go(0);
+					this.$router.push('/box');
 				}else{
 					this.$message.error('操作失败')
 				}		
@@ -103,6 +113,9 @@
 		},
 		created() {
 		let state = sessionStorage.getItem('token')
+		this.userid=sessionStorage.getItem('id')
+		this.nickname =sessionStorage.getItem('nickname')
+		this.avatar =sessionStorage.getItem('img')
 		if(state === 'islogin'){
 				this.islogin =true
 				this.getstatus()

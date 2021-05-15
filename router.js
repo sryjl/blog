@@ -59,6 +59,10 @@ const router = createRouter({
 					path: '/create/newtags',
 					name: 'newtags',
 					component: () => import('@/pages/create/newtags.vue'),
+				},{
+					path:'/create/createArticle',
+					name:'createartiecle',
+					component:() => import('@/pages/create/cratearticle.vue')
 				}
 			]
 		},
@@ -67,12 +71,26 @@ const router = createRouter({
 			name: 'login',
 			component: () => import('@/pages/login/index.vue'),
 		},
+		{
+			path:'/sign',
+			name:'sign',
+			component:()=>import('@/pages/login/sign.vue')
+		},
+		{
+			path:'/box',
+			name:'box',
+			component:()=>import('@/pages/login/box.vue')
+		}
 	]
 });
 //全局路由前置守卫
 router.beforeEach((to, from, next) => {
+	// const token = sessionStorage.getItem('token')
+	// if (token === 'islogin'){
+	// 	this.$router.push('/index/home')
+	// }
 	if (to.path === '/' || to.path === '/index') {
-		next('/index/home')
+		next('/box')
 	}
 	next();
 });

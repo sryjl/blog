@@ -1,5 +1,5 @@
 <template>
-	<view>
+	<view class="alltheall">
 		<!-- 博客文章内容 -->
 		<view class="box-card-father">
 			<el-card class="box-card" v-for="(item,index) in blogList" :key='item.id'>
@@ -12,10 +12,13 @@
 				</view>
 				<text class="description">{{item.description}}</text>
 				<view class="creater">
-					<text class="time el-icon-alarm-clock">2020/12/22</text>
-					<text class="el-icon-user-solid artist">秋人</text>
-					<text class="iconfont icon-guidang artist">归档占位</text>
-					<text class="iconfont icon-biaoqian artist">标签占位</text>
+					<text class="time el-icon-alarm-clock">{{item.createTime.split('T')[0]}}</text>
+					<text class="el-icon-user-solid artist">{{nickname}}</text>
+					<text class="iconfont icon-guidang artist" @click="gotoClass(item.type.id)" style="cursor: pointer;">{{item.type.name?item.type.name:'暂无分类'}}</text>
+					<text class="iconfont icon-biaoqian artist" v-if="item.tags.length>0">
+						<text v-for="item1 in item.tags" :key="item1.id" style="display: inline-block;margin-right: 2px;cursor: pointer;" @click="gotoTags(item1.id)">{{item1.name}}</text>
+					</text>
+					<text class="iconfont icon-biaoqian artist" v-else>暂无标签</text>
 				</view>
 				<view class="others">
 					<text class="el-icon-star-on others-child" v-if="item.appreciation"></text>
@@ -26,17 +29,19 @@
 			</el-card>
 			<!-- 搜索框 -->
 			<el-card class="search">			
-			   <uni-search-bar></uni-search-bar>
+			   <uni-search-bar v-model="searchs"
+			   @confirm="thesearch"
+			   ></uni-search-bar>
 			</el-card> <!-- 分页 -->
 
 			<!-- 分类 -->
 			<el-card class="tags">
 				<text class="tagscloud">分类</text>
-				<text v-for="(item,index) in tags" :key="item.id" class="tagsname">{{item.name}}</text>
+				<text v-for="(item,index) in tags" :key="item.id" class="tagsname" @click="gotoClass(item.id)" style="cursor: pointer;">{{item.name}}</text>
 			</el-card> <!-- 分页 -->
 			<el-card class="hotdetails">
 				<text class="hotblg">热门文章</text>
-				<text v-for="(item,index) in hotdetails" :key="item.id" class="hotname"><text :class="{hotindex:true,secondfor:index<2?true:false}">{{index + 1}}</text>{{item.title}}</text>
+				<text v-for="(item,index) in hotdetails" :key="item.id" class="hotname"  @click="toArticle(item.id)" style="cursor: pointer;"><text :class="{hotindex:true,secondfor:index<2?true:false}">{{index + 1}}</text>{{item.title}}</text>
 			</el-card> <!-- 分页 -->
 			<view class="Paginational">
 				<el-pagination background  @current-change="handleCurrentChange" @prev-click="handleCurrentChange"
@@ -54,6 +59,9 @@
 	export default {
 		data() {
 			return {
+				searchs:'',
+				userid:'',
+				nickname:'',
 				count: 0,
 				tags: [],
 				hotdetails: [],
@@ -62,6 +70,25 @@
 			}
 		},
 		methods: {
+			async thesearch(e){	
+				const res = await this.$http({
+					url: '/search?keywords=' + e.value +'&userId='+this.userid,
+				})
+				console.log(res.data)
+				this.blogList =res.data.data.blogsFoundByKeywords
+				this.count = this.blogList.length
+				
+			},
+			gotoTags(e){
+				this.$router.push(
+				{path: '/index/tags', query: {id: e}}
+				)
+			},
+			gotoClass(e){
+				this.$router.push(
+				{path: '/index/class', query: {id: e}}
+				)
+			},
 			toArticle(e){
 				this.$router.push(
 				{path: '/index/articledetal', query: {id: e}}
@@ -69,7 +96,7 @@
 			},
 			async getdetail(val) {
 				const res = await this.$http({
-					url: '/blogPage/' + val
+					url: '/blogPage?pageNumber=' + val+'&userId='+this.userid,
 				})
 				this.blogList = res.data.data.blogs
 				this.count = res.data.data.count
@@ -80,7 +107,7 @@
 			},
 			async gettags() {
 				const res = await this.$http({
-					url: '/types'
+					url: '/types?userId='+this.userid
 				})
 				console.log(res)
 				this.tags = res.data.data.types
@@ -123,6 +150,10 @@
 			
 		},
 		created() {
+			this.userid=sessionStorage.getItem('id')
+			this.nickname =sessionStorage.getItem('nickname')
+			console.log(this.userid)
+			console.log(this.nickname)
 			this.getdetail(0)
 			this.gettags()
 			this.gethots()
@@ -140,6 +171,7 @@
 	.liubai{
 		height: 40px;
 	}
+
 	.others {
 		position: absolute;
 		bottom: 20px;
@@ -210,6 +242,7 @@
 			font-size: 18px;
 			font-weight: bold;
 			vertical-align: middle;
+			cursor: pointer;
 		}
 		.flag {
 			border-radius: 5px;

@@ -17,11 +17,13 @@
 		},
 		created() {
 		},
-
 	}
 </script>
 
 <style lang="less">
+	.content{
+
+	}
 	.kong {
 		height: 70px;
 	}

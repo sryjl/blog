@@ -16,10 +16,13 @@
 				</view>
 				<text class="description">{{item.description}}</text>
 				<view class="creater">
-					<text class="time el-icon-alarm-clock">2020/12/22</text>
-					<text class="el-icon-user-solid artist">秋人</text>
-					<text class="iconfont icon-guidang artist">归档占位</text>
-					<text class="iconfont icon-biaoqian artist">标签占位</text>
+					<text class="time el-icon-alarm-clock">{{item.createTime.split('T')[0]}}</text>
+					<text class="el-icon-user-solid artist">{{nickname}}</text>
+					<text class="iconfont icon-guidang artist" @click="gotoClass(item.type.id)" style="cursor: pointer;">{{item.type.name?item.type.name:'暂无分类'}}</text>
+					<text class="iconfont icon-biaoqian artist" v-if="item.tags.length>0">
+						<text v-for="item1 in item.tags" :key="item1.id" style="display: inline-block;margin-right: 2px;cursor: pointer;" @click="gotoTags(item1.id)">{{item1.name}}</text>
+					</text>
+					<text class="iconfont icon-biaoqian artist" v-else>暂无标签</text>
 				</view>
 				<view class="others">
 					<text class="el-icon-star-on others-child" v-if="item.appreciation"></text>
@@ -31,17 +34,17 @@
 			<!-- 自我展示 -->
 			<el-card class="personal">
 				<image src="../../static/role.jpg" mode="aspectFit" class="cll"></image>
-				<text class="personalqiu">秋人</text>
+				<text class="personalqiu">{{nickname}}</text>
 				<text>一枚Java渣 但行好事 莫问前程</text>
 				<text class="iconfont icon-feiji">江苏-盐城</text>
 			</el-card> <!-- 分页 -->
 			<el-card class="tags">
 				<text class="tagscloud iconfont icon-biaoqian">标签云</text>
-				<text v-for="(item,index) in tags" :key="item.id" class="tagsname">{{item.name}}</text>
+				<text v-for="(item,index) in tags" :key="item.id" class="tagsname" @click="gotoTags(item.id)">{{item.name}}</text>
 			</el-card> <!-- 分页 -->
 			<el-card class="hotdetails">
 				<text class="hotblg">热门文章</text>
-				<text v-for="(item,index) in hotdetails" :key="item.id" class="hotname"><text :class="{hotindex:true,secondfor:index<2?true:false}">{{index + 1}}</text>{{item.title}}</text>
+				<text v-for="(item,index) in hotdetails" :key="item.id" class="hotname" @click="toArticle(item.id)" style="cursor: pointer;"><text :class="{hotindex:true,secondfor:index<2?true:false}">{{index + 1}}</text>{{item.title}}</text>
 			</el-card> <!-- 分页 -->
 			<view class="Paginational">
 				<el-pagination background  @current-change="handleCurrentChange" @prev-click="handleCurrentChange"
@@ -58,6 +61,8 @@
 	export default {
 		data() {
 			return {
+				userid:'',
+				nickname:'',
 				count: 0,
 				tags: [],
 				hotdetails: [],
@@ -66,6 +71,16 @@
 			}
 		},
 		methods: {
+			gotoTags(e){
+				this.$router.push(
+				{path: '/index/tags', query: {id: e}}
+				)
+			},
+			gotoClass(e){
+				this.$router.push(
+				{path: '/index/class', query: {id: e}}
+				)
+			},
 			toArticle(e){
 				this.$router.push(
 				{path: '/index/articledetal', query: {id: e}}
@@ -73,7 +88,7 @@
 			},
 			async getdetail(val) {
 				const res = await this.$http({
-					url: '/blogPage/' + val
+					url: '/blogPage?pageNumber=' + val+'&userId='+this.userid,
 				})
 				this.blogList = res.data.data.blogs
 				this.count = res.data.data.count
@@ -84,7 +99,7 @@
 			},
 			async gettags() {
 				const res = await this.$http({
-					url: '/allTags'
+					url: '/tags?userId='+this.userid
 				})
 				this.tags = res.data.data.tags
 
@@ -127,6 +142,10 @@
 			
 		},
 		created() {
+			this.userid=sessionStorage.getItem('id')
+			this.nickname =sessionStorage.getItem('nickname')
+			console.log(this.userid)
+			console.log(this.nickname)
 			this.getdetail(0)
 			this.gettags()
 			this.gethots()
@@ -215,6 +234,7 @@
 			font-size: 18px;
 			font-weight: bold;
 			vertical-align: middle;
+			cursor: pointer;
 		}
 
 		.flag {
@@ -299,6 +319,7 @@
 		   padding: 10px;
 		   font-size: 20px;
 		   font-weight: bold;
+		   cursor: pointer;
 	   }
 	   .tagsname:nth-child(4n+1){
 		   color: red;
