@@ -41,6 +41,11 @@
 			},
 			created() {
 				this.userid=sessionStorage.getItem('id')
+				if (this.$route.query.user) {
+					this.userid = this.$route.query.user
+					this.nickname = this.$route.query.nickname
+					this.topy = 1
+				}
 				this.nickname =sessionStorage.getItem('nickname')
 				this.getDocument()
 			}

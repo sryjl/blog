@@ -44,11 +44,14 @@
 								>
 								</image>
 								<view 
-								style="display: inline-block;height: 100px;line-height: 100px;font-size: 30px;vertical-align:middle;margin-left: 30px;font-weight: 400;cursor: pointer;"
+								style="display: inline-block;height: 100px;line-height: 40px;font-size: 20px;vertical-align:middle;margin-left: 10px;font-weight: 400;cursor: pointer;"
 								class="namesss"
 								@click="gotohome(item.id,item.nickname)"
 								>
 									{{item.nickname}}
+									<view style="font-size: 14px;color: #6d757a;;">
+									此用户没有个性签名啊啊啊	
+									</view>
 								</view>
 							</el-card>
 						</view>

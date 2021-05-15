@@ -131,7 +131,7 @@
 			},
 			async gettags(e){
 				const res = await this.$http({
-					url:'admin/typeControl',
+					url:'/types?userId='+this.userid,
 				})
 				this.typelist = res.data.data.types
 				console.log(res.data)

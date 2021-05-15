@@ -120,7 +120,7 @@
 			},
 			async gettags(e){
 				const res = await this.$http({
-					url:'admin/tagControl',
+					url:'/tags?userId='+this.userid,
 				})
 				this.taglist = res.data.data.tags
 				console.log(res.data)
