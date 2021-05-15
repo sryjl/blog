@@ -80,6 +80,11 @@ const router = createRouter({
 			path:'/box',
 			name:'box',
 			component:()=>import('@/pages/login/box.vue')
+		},
+		{
+			path:'/search',
+			name:'search',
+			component:()=>import('@/pages/search/index.vue')
 		}
 	]
 });

@@ -63,10 +63,22 @@
 				typelist:[],
 				active:'',
 				pageNumber:'',
+				topy:'',
 				}
 		},
 		methods:{
 			gotoTags(e){
+				if (this.topy === 1) {
+					this.$router.push({
+						path: '/index/tags',
+						query: {
+							id: e,
+							user:this.userid,
+							nickname:this.nickname
+						}
+					})
+					return
+				}
 				this.$router.push(
 				{path: '/index/tags', query: {id: e}}
 				)
@@ -83,6 +95,17 @@
 			},
 			
 			toArticle(e){
+				if (this.topy === 1) {
+					this.$router.push({
+						path: '/index/articledetal',
+						query: {
+							id: e,
+							user:this.userid,
+							nickname:this.nickname
+						}
+					})
+					return
+				}
 				this.$router.push(
 				{path: '/index/articledetal', query: {id: e}}
 				)
@@ -119,6 +142,11 @@
 		created() {
 			this.userid=sessionStorage.getItem('id')
 			this.nickname =sessionStorage.getItem('nickname')
+			if (this.$route.query.user) {
+				this.userid = this.$route.query.user
+				this.nickname = this.$route.query.nickname
+				this.topy = 1
+			}
 			this.gettags('allTypes')
 			if(this.$route.query.id){
 				this.getTagsDetail(this.$route.query.id)

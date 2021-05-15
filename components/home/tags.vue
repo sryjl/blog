@@ -45,11 +45,23 @@
 				count: 0,
 				active:'',
 				blogList: [],
-				taglist:[]
+				taglist:[],
+				topy:''
 			}
 		},
 		methods: {
 			gotoClass(e){
+				if (this.topy === 1) {
+					this.$router.push({
+						path: '/index/class',
+						query: {
+							id: e,
+							user:this.userid,
+							nickname:this.nickname
+						}
+					})
+					return
+				}
 				this.$router.push(
 				{path: '/index/class', query: {id: e}}
 				)
@@ -71,6 +83,17 @@
 				this.count=this.blogList.length
 			},
 			toArticle(e){
+				if (this.topy === 1) {
+					this.$router.push({
+						path: '/index/articledetal',
+						query: {
+							id: e,
+							user:this.userid,
+							nickname:this.nickname
+						}
+					})
+					return
+				}
 				this.$router.push(
 				{path: '/index/articledetal', query: {id: e}}
 				)
@@ -108,6 +131,11 @@
 		created() {
 			this.userid=sessionStorage.getItem('id')
 			this.nickname =sessionStorage.getItem('nickname')
+			if (this.$route.query.user) {
+				this.userid = this.$route.query.user
+				this.nickname = this.$route.query.nickname
+				this.topy = 1
+			}
 			if(this.$route.query.id){
 				this.getTagsDetail(this.$route.query.id)
 			}else{

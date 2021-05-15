@@ -19,7 +19,8 @@
 			return{
 				userid:'',
 				nickname:'',
-				blogList:[]
+				blogList:[],
+				topy:1
 				}
 		},
 		methods:{
@@ -35,6 +36,11 @@
 		created() {
 			this.userid=sessionStorage.getItem('id')
 			this.nickname =sessionStorage.getItem('nickname')
+			if (this.$route.query.user) {
+				this.userid = this.$route.query.user
+				this.nickname = this.$route.query.nickname
+				this.topy = 1
+			}
 			this.getDocument()
 		}
 	}

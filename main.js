@@ -2,6 +2,8 @@ import Vue from 'vue'
 import App from './App'
 import request from 'common/js/request.js'
 import {
+	Tabs,
+	TabPane,
 Dialog,
 Menu,
 MenuItem,
@@ -27,14 +29,18 @@ Switch,
 Checkbox,
 CheckboxGroup,
 Radio,
-RadioGroup
+RadioGroup,
+Avatar
 } from 'element-ui'
 Vue.config.productionTip = false
 import {router,RouterMount} from 'router.js'  //路径换成自己的
 Vue.use(router)
 App.mpType = 'app'
 
+Vue.use(Avatar)
 Vue.use(Dialog)
+Vue.use(Tabs)
+Vue.use(TabPane)
 Vue.use(Select)
 Vue.use(Radio)
 Vue.use(RadioGroup)

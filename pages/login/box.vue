@@ -1,7 +1,12 @@
 <template>
 	<view class="mask">
-		<view style="color: white;text-align: center;margin-top: 18%;">
-			<view><h1 style="font-weight: 400;">Aryaaa</h1></view>
+		<uni-search-bar v-model="searchs"
+		@confirm="thesearch"
+		style="width: 50%;background-color: rgba(0,0,0,0);margin: auto;margin-top: 100px;padding-left: 12px;"
+		
+		></uni-search-bar>
+		<view style="color: white;text-align: center;margin-top: 8%;">
+			<view><h1 style="font-weight: 400;">个人博客系统</h1></view>
 			<view style="margin-top: 20px;margin-bottom: 20px;letter-spacing:10px">
 				灵明无着，物来顺应，未来不迎，当时不杂，即过不恋。
 			</view>
@@ -16,6 +21,7 @@
 	export default {
 		data() {
 			return {
+				searchs:''
 			}
 		},
 		methods: {
@@ -27,7 +33,12 @@
 					this.$router.push('/login')
 				}
 			},
-		}
+			thesearch(){
+				this.$router.push(
+				{path: '/search', query: {query: this.searchs.value}}
+				)
+			}
+		},
 	}
 </script>
 

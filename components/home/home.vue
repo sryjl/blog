@@ -10,7 +10,7 @@
 				<image v-if="item.firstPicture" :src="item.firstPicture" mode="aspectFill"></image>
 				<image v-else src="../../static/biaotou.png" mode="aspectFill"></image>
 				<view class="title-all">
-					<text class="title"  @click="toArticle(item.id)">{{item.title}}</uni-title></text>
+					<text class="title" @click="toArticle(item.id)">{{item.title}}</uni-title></text>
 					<text class="flag" v-show="item.flag">{{item.flag}}</text>
 					<text class="recommend" v-show="item.recommend">推荐</text>
 				</view>
@@ -18,9 +18,12 @@
 				<view class="creater">
 					<text class="time el-icon-alarm-clock">{{item.createTime.split('T')[0]}}</text>
 					<text class="el-icon-user-solid artist">{{nickname}}</text>
-					<text class="iconfont icon-guidang artist" @click="gotoClass(item.type.id)" style="cursor: pointer;">{{item.type.name?item.type.name:'暂无分类'}}</text>
+					<text class="iconfont icon-guidang artist" @click="gotoClass(item.type.id)"
+						style="cursor: pointer;">{{item.type.name?item.type.name:'暂无分类'}}</text>
 					<text class="iconfont icon-biaoqian artist" v-if="item.tags.length>0">
-						<text v-for="item1 in item.tags" :key="item1.id" style="display: inline-block;margin-right: 2px;cursor: pointer;" @click="gotoTags(item1.id)">{{item1.name}}</text>
+						<text v-for="item1 in item.tags" :key="item1.id"
+							style="display: inline-block;margin-right: 2px;cursor: pointer;"
+							@click="gotoTags(item1.id)">{{item1.name}}</text>
 					</text>
 					<text class="iconfont icon-biaoqian artist" v-else>暂无标签</text>
 				</view>
@@ -29,7 +32,7 @@
 					<text class="el-icon-star-off others-child " v-else></text>
 					<text class="el-icon-view others-child " space="ensp">{{' '+item.views}}</text>
 				</view>
-	
+
 			</el-card>
 			<!-- 自我展示 -->
 			<el-card class="personal">
@@ -40,55 +43,101 @@
 			</el-card> <!-- 分页 -->
 			<el-card class="tags">
 				<text class="tagscloud iconfont icon-biaoqian">标签云</text>
-				<text v-for="(item,index) in tags" :key="item.id" class="tagsname" @click="gotoTags(item.id)">{{item.name}}</text>
+				<text v-for="(item,index) in tags" :key="item.id" class="tagsname"
+					@click="gotoTags(item.id)">{{item.name}}</text>
 			</el-card> <!-- 分页 -->
 			<el-card class="hotdetails">
 				<text class="hotblg">热门文章</text>
-				<text v-for="(item,index) in hotdetails" :key="item.id" class="hotname" @click="toArticle(item.id)" style="cursor: pointer;"><text :class="{hotindex:true,secondfor:index<2?true:false}">{{index + 1}}</text>{{item.title}}</text>
+				<text v-for="(item,index) in hotdetails" :key="item.id" class="hotname" @click="toArticle(item.id)"
+					style="cursor: pointer;"><text
+						:class="{hotindex:true,secondfor:index<2?true:false}">{{index + 1}}</text>{{item.title}}</text>
 			</el-card> <!-- 分页 -->
 			<view class="Paginational">
-				<el-pagination background  @current-change="handleCurrentChange" @prev-click="handleCurrentChange"
-				 @next-click="handleCurrentChange" layout="total,prev, pager, next" :total="count" :page-size="10">
+				<el-pagination background @current-change="handleCurrentChange" @prev-click="handleCurrentChange"
+					@next-click="handleCurrentChange" layout="total,prev, pager, next" :total="count" :page-size="10">
 				</el-pagination>
 			</view>
 			<view class="liubai">
-				
+
 			</view>
 		</view>
-		</view>
+	</view>
 </template>
 <script>
 	export default {
 		data() {
 			return {
-				userid:'',
-				nickname:'',
+				userid: '',
+				nickname: '',
 				count: 0,
 				tags: [],
 				hotdetails: [],
 				title: 'Hello',
 				blogList: [],
+				topy: ''
 			}
 		},
 		methods: {
-			gotoTags(e){
-				this.$router.push(
-				{path: '/index/tags', query: {id: e}}
-				)
+			gotoTags(e) {
+				if (this.topy === 1) {
+					this.$router.push({
+						path: '/index/tags',
+						query: {
+							id: e,
+							user:this.userid,
+							nickname:this.nickname
+						}
+					})
+					return
+				}
+				this.$router.push({
+					path: '/index/tags',
+					query: {
+						id: e
+					}
+				})
 			},
-			gotoClass(e){
-				this.$router.push(
-				{path: '/index/class', query: {id: e}}
-				)
+			gotoClass(e) {
+				if (this.topy === 1) {
+					this.$router.push({
+						path: '/index/class',
+						query: {
+							id: e,
+							user:this.userid,
+							nickname:this.nickname
+						}
+					})
+					return
+				}
+				this.$router.push({
+					path: '/index/class',
+					query: {
+						id: e
+					}
+				})
 			},
-			toArticle(e){
-				this.$router.push(
-				{path: '/index/articledetal', query: {id: e}}
-				)
+			toArticle(e) {
+				if (this.topy === 1) {
+					this.$router.push({
+						path: '/index/articledetal',
+						query: {
+							id: e,
+							user:this.userid,
+							nickname:this.nickname
+						}
+					})
+					return
+				}
+				this.$router.push({
+					path: '/index/articledetal',
+					query: {
+						id: e
+					}
+				})
 			},
 			async getdetail(val) {
 				const res = await this.$http({
-					url: '/blogPage?pageNumber=' + val+'&userId='+this.userid,
+					url: '/blogPage?pageNumber=' + val + '&userId=' + this.userid,
 				})
 				this.blogList = res.data.data.blogs
 				this.count = res.data.data.count
@@ -99,7 +148,7 @@
 			},
 			async gettags() {
 				const res = await this.$http({
-					url: '/tags?userId='+this.userid
+					url: '/tags?userId=' + this.userid
 				})
 				this.tags = res.data.data.tags
 
@@ -112,7 +161,7 @@
 				this.hotdetails = res.data.data.hotBlogs
 
 			},
-			toLogin(){
+			toLogin() {
 				console.log(this.activeIndex2)
 				// uni.navigateTo({
 				// 	url:'../login/index'
@@ -126,24 +175,29 @@
 				this.user = res.data.data
 				console.log(this.user)
 			},
-			async loginout(){
+			async loginout() {
 				const res = await this.$http({
 					url: '/logout'
 				})
 				console.log(res)
-				if(res.data.code === 200){
+				if (res.data.code === 200) {
 					sessionStorage.removeItem('token')
 					this.$message.success('已成功退出登录')
-					this.islogin =false			
-				}else{
+					this.islogin = false
+				} else {
 					this.$message.error('操作失败')
-				}		
+				}
 			}
-			
+
 		},
 		created() {
-			this.userid=sessionStorage.getItem('id')
-			this.nickname =sessionStorage.getItem('nickname')
+			this.userid = sessionStorage.getItem('id')
+			this.nickname = sessionStorage.getItem('nickname')
+			if (this.$route.query.user) {
+				this.userid = this.$route.query.user
+				this.nickname = this.$route.query.nickname
+				this.topy = 1
+			}
 			console.log(this.userid)
 			console.log(this.nickname)
 			this.getdetail(0)
@@ -155,17 +209,20 @@
 </script>
 
 <style lang="less">
-	.title:hover{
+	.title:hover {
 		color: orange;
 	}
-	.liubai{
+
+	.liubai {
 		height: 40px;
 	}
+
 	.Paginational {
 		width: 750px;
 		margin-top: 30px;
 		text-align: center;
 	}
+
 	.others {
 		position: absolute;
 		bottom: 20px;
@@ -266,20 +323,23 @@
 			vertical-align: middle;
 		}
 	}
-	.hotdetails{
+
+	.hotdetails {
 		position: absolute;
 		width: 368px;
 		height: 300px;
 		top: 740px;
 		left: 780px;
-		.hotblg{
-			display:block;
+
+		.hotblg {
+			display: block;
 			width: 100%;
 			color: #007AFF !important;
 			padding-bottom: 10px;
 			border-bottom: 1px solid #808080;
 		}
-		.hotname{
+
+		.hotname {
 			font-size: 16px;
 			height: 20px;
 			line-height: 20px;
@@ -288,7 +348,8 @@
 			width: 100%;
 			overflow: hidden;
 			text-overflow: ellipsis;
-			.hotindex{
+
+			.hotindex {
 				padding: 3px;
 				padding-left: 5px;
 				padding-right: 5px;
@@ -296,44 +357,53 @@
 				background-color: #007AFF;
 				border-radius: 5px;
 			}
-			.secondfor{
+
+			.secondfor {
 				background-color: #F56C6C;
 			}
 		}
 	}
-   .tags{
-	   position: absolute;
-	   width: 368px;
-	   height: 300px;
-	   top: 420px;
-	   left: 780px;
-	   .tagscloud{
-		   display: block;
-		   color: #007AFF !important;
-		   width: 100%;
-		   padding-bottom: 10px;
-		   border-bottom: 1px solid #808080;
-	   }
-	   .tagsname{
-		   display: inline-block;
-		   padding: 10px;
-		   font-size: 20px;
-		   font-weight: bold;
-		   cursor: pointer;
-	   }
-	   .tagsname:nth-child(4n+1){
-		   color: red;
-	   }
-	   .tagsname:nth-child(4n+2){
-	   		   color: blue;
-	   }
-	   .tagsname:nth-child(4n+3){
-	   		   color: purple;
-	   }
-	   .tagsname:nth-child(4n+4){
-	   		   color: green;
-	   }
-   }
+
+	.tags {
+		position: absolute;
+		width: 368px;
+		height: 300px;
+		top: 420px;
+		left: 780px;
+
+		.tagscloud {
+			display: block;
+			color: #007AFF !important;
+			width: 100%;
+			padding-bottom: 10px;
+			border-bottom: 1px solid #808080;
+		}
+
+		.tagsname {
+			display: inline-block;
+			padding: 10px;
+			font-size: 20px;
+			font-weight: bold;
+			cursor: pointer;
+		}
+
+		.tagsname:nth-child(4n+1) {
+			color: red;
+		}
+
+		.tagsname:nth-child(4n+2) {
+			color: blue;
+		}
+
+		.tagsname:nth-child(4n+3) {
+			color: purple;
+		}
+
+		.tagsname:nth-child(4n+4) {
+			color: green;
+		}
+	}
+
 	.personal {
 		position: absolute;
 		width: 368px;
@@ -369,6 +439,7 @@
 		}
 
 	}
+
 	.box-card-father {
 		position: relative;
 		width: 1150px;
@@ -421,7 +492,4 @@
 			line-height: 40px;
 		}
 	}
-
-
-
 </style>
